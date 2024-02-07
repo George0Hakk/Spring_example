@@ -1,0 +1,49 @@
+package com.example.springboot_example.dao;
+
+
+import com.example.springboot_example.Entity.Employee;
+import jakarta.persistence.EntityManager;
+
+import jakarta.persistence.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+@Repository
+public class EmployeeDAOImpl implements EmployeeDAO{
+    @Autowired
+    private EntityManager entityManager;
+
+
+    public void saveEmployee(Employee employee) {
+        Employee newEmployee = entityManager.merge(employee);
+        employee.setId(newEmployee.getId());
+    }
+
+
+    public List<Employee> getAllEmployees() {
+
+
+        Query query = entityManager.createQuery("from Employee");
+        List<Employee> allEmployees = query.getResultList();
+
+        return  allEmployees;
+
+    }
+
+
+    public Employee getEmployee(int id) {
+
+        Employee employee = entityManager.find(Employee.class,id);
+        return  employee;
+    }
+
+
+    public void deleteEmployee(int id) {
+
+        Query query = entityManager.createQuery("delete from Employee " +
+                "where id =:employeeId");
+        query.setParameter("employeeId",id);
+        query.executeUpdate();
+    }
+}
